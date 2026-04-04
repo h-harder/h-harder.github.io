@@ -1,0 +1,982 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#0d0e0f">
+<title>North Star NY/DC 2026</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=IBM+Plex+Mono:wght@300;400;500&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0d0e0f;
+    --surface: #141516;
+    --card: #1a1b1d;
+    --border: rgba(255,255,255,0.08);
+    --yellow: #f7c948;
+    --yellow-dim: rgba(247,201,72,0.1);
+    --yellow-glow: 0 0 24px rgba(247,201,72,0.25);
+    --blue-light: #4a9eff;
+    --text: #e2e4e8;
+    --muted: #5a5d63;
+    --muted2: #7a7d84;
+    --nav-h: 68px;
+    --safe-bottom: env(safe-area-inset-bottom, 0px);
+  }
+
+  * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color: transparent; }
+
+  html, body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'IBM Plex Sans', sans-serif;
+    min-height: 100%;
+    overflow-x: hidden;
+    overscroll-behavior: none;
+  }
+
+  /* ── SKYLINE HEADER ── */
+  .skyline-wrap {
+    position: relative;
+    background: #080b14;
+    overflow: hidden;
+    border-bottom: 2px solid var(--yellow);
+  }
+  .skyline-wrap::before {
+    content:''; position:absolute; inset:0;
+    background: linear-gradient(180deg, #060916 0%, #0c1022 45%, #110d03 82%, #0d0e0f 100%);
+    pointer-events: none;
+  }
+  .stars {
+    position:absolute; inset:0; pointer-events:none; z-index:0;
+    background-image:
+      radial-gradient(1px 1px at 8% 12%, rgba(255,255,255,0.7) 0%, transparent 100%),
+      radial-gradient(1px 1px at 22% 6%,  rgba(255,255,255,0.5) 0%, transparent 100%),
+      radial-gradient(1px 1px at 38% 18%, rgba(255,255,255,0.4) 0%, transparent 100%),
+      radial-gradient(1.5px 1.5px at 55% 4%,  rgba(255,255,200,0.6) 0%, transparent 100%),
+      radial-gradient(1px 1px at 70% 14%, rgba(255,255,255,0.5) 0%, transparent 100%),
+      radial-gradient(1px 1px at 82% 9%,  rgba(255,255,255,0.4) 0%, transparent 100%),
+      radial-gradient(1px 1px at 93% 20%, rgba(255,255,255,0.6) 0%, transparent 100%),
+      radial-gradient(1px 1px at 14% 28%, rgba(255,255,255,0.3) 0%, transparent 100%),
+      radial-gradient(1px 1px at 47% 22%, rgba(255,255,200,0.3) 0%, transparent 100%),
+      radial-gradient(1px 1px at 76% 25%, rgba(255,255,255,0.3) 0%, transparent 100%);
+  }
+  .skyline-svg { display:block; width:100%; position:relative; z-index:1; }
+
+  .header-content {
+    position: relative; z-index: 2;
+    padding: 14px 16px 14px;
+    display: flex; align-items: flex-end;
+    justify-content: space-between; gap: 10px;
+    flex-wrap: wrap;
+  }
+  .header-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(30px, 9vw, 52px);
+    letter-spacing: 2px; line-height: 0.9;
+    color: var(--yellow);
+    text-shadow: 0 0 30px rgba(247,201,72,0.35), 2px 2px 0 #000;
+  }
+  .header-sub {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px; color: var(--muted2);
+    letter-spacing: 0.1em; margin-top: 5px;
+    text-transform: uppercase;
+  }
+  .live-clock {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 13px; color: var(--yellow);
+    background: rgba(0,0,0,0.65);
+    border: 1px solid rgba(247,201,72,0.3);
+    border-radius: 4px; padding: 7px 12px;
+    display: flex; align-items: center; gap: 7px;
+    backdrop-filter: blur(6px);
+    letter-spacing: 0.04em;
+    white-space: nowrap;
+  }
+  .live-dot {
+    width: 6px; height: 6px;
+    background: var(--yellow); border-radius: 50%;
+    animation: blink 1.4s infinite; flex-shrink: 0;
+  }
+  @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.15} }
+
+  /* Subway stripe */
+  .subway-line {
+    height: 5px;
+    background: linear-gradient(90deg,
+      #e8392a 0% 16.6%, #f7941d 16.6% 33.2%,
+      #f7c948 33.2% 49.8%, #00933c 49.8% 66.4%,
+      #1a5fa8 66.4% 83%, #6e3fa3 83% 100%);
+  }
+
+  /* ── MAIN SCROLL AREA ── */
+  .app {
+    padding: 0 14px;
+    padding-bottom: calc(var(--nav-h) + var(--safe-bottom) + 16px);
+    max-width: 680px;
+    margin: 0 auto;
+  }
+
+  /* ── TAB PANELS ── */
+  .tab-panel { display: none; padding-top: 16px; }
+  .tab-panel.active { display: block; animation: fadeUp 0.22s ease; }
+  @keyframes fadeUp { from{opacity:0;transform:translateY(6px)} to{opacity:1;transform:translateY(0)} }
+
+  /* ── BOTTOM NAV ── */
+  .bottom-nav {
+    position: fixed;
+    bottom: 0; left: 0; right: 0;
+    z-index: 100;
+    background: rgba(17,18,20,0.96);
+    border-top: 1px solid var(--border);
+    backdrop-filter: blur(16px) saturate(1.4);
+    -webkit-backdrop-filter: blur(16px) saturate(1.4);
+    display: flex;
+    padding-bottom: var(--safe-bottom);
+    height: calc(var(--nav-h) + var(--safe-bottom));
+  }
+  .nav-btn {
+    flex: 1;
+    background: none; border: none;
+    color: var(--muted);
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    gap: 4px;
+    padding: 10px 6px;
+    cursor: pointer;
+    transition: color 0.15s;
+    position: relative;
+    -webkit-tap-highlight-color: transparent;
+    min-height: 44px;
+  }
+  .nav-btn::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 25%; right: 25%;
+    height: 2px;
+    background: var(--yellow);
+    border-radius: 0 0 2px 2px;
+    transform: scaleX(0);
+    transition: transform 0.2s;
+  }
+  .nav-btn.active { color: var(--yellow); }
+  .nav-btn.active::before { transform: scaleX(1); }
+  .nav-icon { font-size: 22px; line-height: 1; }
+  .nav-label {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 11px; letter-spacing: 1.2px;
+    line-height: 1;
+  }
+
+  /* ── CARD BASE ── */
+  .card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--yellow);
+    border-radius: 4px;
+    padding: 18px 16px;
+    margin-bottom: 12px;
+  }
+  .card.subtle { border-left-color: rgba(247,201,72,0.3); }
+  .card.blue-accent { border-left-color: var(--blue-light); }
+
+  /* ── EYEBROW LABEL ── */
+  .eyebrow {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px; letter-spacing: 0.2em;
+    color: var(--yellow); text-transform: uppercase;
+    margin-bottom: 10px;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .eyebrow::after { content:''; flex:1; height:1px; background:rgba(247,201,72,0.2); }
+  .eyebrow.dim { color: var(--muted2); }
+  .eyebrow.dim::after { background: var(--border); }
+
+  /* ── NOW TAB ── */
+  .now-activity {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(26px, 6.5vw, 38px);
+    letter-spacing: 1px; line-height: 1.1;
+    color: var(--text);
+    margin-bottom: 5px;
+  }
+  .now-timerange {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px; color: var(--muted2);
+    margin-bottom: 20px; line-height: 1.5;
+  }
+
+  /* Progress bar */
+  .prog-wrap { margin-bottom: 6px; }
+  .prog-labels {
+    display: flex; justify-content: space-between;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px; color: var(--muted);
+    margin-bottom: 6px; letter-spacing: 0.08em;
+  }
+  .prog-labels .hi { color: var(--yellow); }
+  .prog-bg {
+    height: 7px;
+    background: rgba(255,255,255,0.06);
+    overflow: hidden; position: relative;
+    border-radius: 0;
+  }
+  .prog-bg::after {
+    content:''; position:absolute; inset:0;
+    background-image: repeating-linear-gradient(90deg,
+      transparent 0px, transparent 9px,
+      rgba(0,0,0,0.5) 9px, rgba(0,0,0,0.5) 10px);
+    z-index: 2;
+  }
+  .prog-fill {
+    height: 100%; background: var(--yellow);
+    transition: width 1s ease;
+    position: relative; z-index: 1;
+  }
+  .prog-fill.trip { background: linear-gradient(90deg, var(--blue-light), var(--yellow)); }
+
+  /* Countdown grid — 4 across on mobile */
+  .cd-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 6px; margin-top: 18px;
+  }
+  .cd-cell {
+    background: rgba(0,0,0,0.35);
+    border: 1px solid rgba(247,201,72,0.15);
+    border-radius: 3px;
+    padding: 12px 4px;
+    text-align: center;
+  }
+  .cd-val {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(28px, 7vw, 40px);
+    color: var(--yellow); line-height: 1;
+    display: block; letter-spacing: 1px;
+    text-shadow: 0 0 16px rgba(247,201,72,0.4);
+  }
+  .cd-unit {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 8px; color: var(--muted);
+    letter-spacing: 0.12em; margin-top: 3px;
+    display: block; text-transform: uppercase;
+  }
+
+  /* Panel */
+  .panel {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 16px;
+    margin-bottom: 12px;
+  }
+
+  /* Next up items */
+  .next-items { display:flex; flex-direction:column; gap:8px; }
+  .next-item {
+    display: flex; align-items: flex-start; gap: 12px;
+    padding: 12px 14px;
+    background: var(--yellow-dim);
+    border-left: 2px solid rgba(247,201,72,0.45);
+    border-radius: 0 3px 3px 0;
+    min-height: 44px;
+  }
+  .next-time {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px; color: var(--yellow);
+    white-space: nowrap; min-width: 52px;
+    margin-top: 1px;
+  }
+  .next-text { font-size: 14px; line-height: 1.45; }
+
+  /* Stats row */
+  .stat-row {
+    display: grid; grid-template-columns: repeat(4,1fr);
+    gap: 8px;
+  }
+  .stat-cell { text-align: center; padding: 10px 4px; }
+  .stat-val {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(30px, 8vw, 42px);
+    line-height: 1; letter-spacing: 1px;
+  }
+  .stat-lbl {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 9px; color: var(--muted);
+    letter-spacing: 0.1em; margin-top: 2px;
+    text-transform: uppercase;
+  }
+  .s-done{color:var(--yellow)} .s-now{color:#fff} .s-rem{color:var(--blue-light)} .s-tot{color:var(--muted2)}
+
+  /* Pre/post trip */
+  .state-wrap {
+    background: var(--card);
+    border: 1px solid rgba(247,201,72,0.2);
+    border-left: 4px solid var(--yellow);
+    border-radius: 4px;
+    padding: 40px 20px;
+    text-align: center;
+  }
+  .state-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(38px,10vw,54px);
+    letter-spacing: 3px; color: var(--yellow);
+    margin-bottom: 12px;
+    text-shadow: var(--yellow-glow);
+  }
+  .state-sub { color: var(--muted2); font-size: 14px; line-height: 1.7; }
+  .state-sub strong { color: var(--text); }
+  .big-cd {
+    display: grid; grid-template-columns: repeat(4,1fr);
+    gap: 8px; margin: 24px auto 20px;
+  }
+
+  /* ── OVERVIEW TAB ── */
+  .day-block { margin-bottom: 24px; }
+  .day-header { display:flex; align-items:center; gap:10px; margin-bottom:10px; }
+  .day-badge {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 13px; letter-spacing: 1.5px;
+    padding: 5px 12px; border-radius: 2px;
+    white-space: nowrap; flex-shrink: 0;
+  }
+  .day-badge.past  { background:rgba(247,201,72,0.1); color:var(--yellow); border:1px solid rgba(247,201,72,0.25); }
+  .day-badge.today { background:var(--yellow); color:#0d0e0f; }
+  .day-badge.future{ background:rgba(255,255,255,0.04); color:var(--muted); border:1px solid var(--border); }
+  .day-full { font-family:'IBM Plex Mono',monospace; font-size:10px; color:var(--muted); letter-spacing:0.05em; }
+  .day-div  { flex:1; height:1px; background:var(--border); }
+
+  .activity-list { display:flex; flex-direction:column; gap:3px; }
+  .act-row {
+    display:flex; align-items:flex-start; gap:10px;
+    padding: 12px 12px;
+    border-radius: 3px;
+    border: 1px solid transparent;
+    min-height: 44px;
+    position: relative;
+  }
+  .act-row.done    { background:rgba(247,201,72,0.03); border-color:rgba(247,201,72,0.06); }
+  .act-row.current { background:rgba(247,201,72,0.09); border-color:rgba(247,201,72,0.3); border-left:3px solid var(--yellow); }
+  .act-row.upcoming{ background:rgba(255,255,255,0.015); border-color:rgba(255,255,255,0.04); }
+  .act-t {
+    font-family:'IBM Plex Mono',monospace; font-size:11px;
+    color:var(--muted); white-space:nowrap; min-width:52px;
+    margin-top:1px; flex-shrink:0;
+  }
+  .act-t.now { color:var(--yellow); }
+  .act-pip { width:7px; height:7px; border-radius:50%; margin-top:4px; flex-shrink:0; }
+  .done    .act-pip { background:rgba(247,201,72,0.35); }
+  .current .act-pip { background:var(--yellow); box-shadow:0 0 8px rgba(247,201,72,0.7); animation:blink 1.4s infinite; }
+  .upcoming .act-pip{ background:rgba(255,255,255,0.1); }
+  .act-label { font-size: 14px; line-height: 1.45; flex:1; }
+  .done    .act-label { color:var(--muted2); }
+  .current .act-label { color:var(--text); font-weight:500; }
+  .upcoming .act-label { color:#8a8d94; }
+  .now-chip {
+    font-family:'IBM Plex Mono',monospace; font-size:9px;
+    letter-spacing:0.12em; color:#0d0e0f;
+    background:var(--yellow); border-radius:2px;
+    padding:2px 7px; white-space:nowrap;
+    margin-top:2px; font-weight:600; flex-shrink:0;
+  }
+
+  /* ── ESSENTIALS TAB ── */
+  .ess-section { margin-bottom: 22px; }
+  .ess-heading {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 19px; letter-spacing: 2px;
+    color: var(--yellow); margin-bottom: 10px;
+    display:flex; align-items:center; gap:8px;
+  }
+  .ess-heading::after { content:''; flex:1; height:2px; background:rgba(247,201,72,0.15); }
+
+  /* Flight card */
+  .flight-card {
+    background:var(--card); border:1px solid var(--border);
+    border-left:3px solid var(--yellow); border-radius:4px;
+    padding:16px; margin-bottom:10px;
+  }
+  .fl-tag {
+    font-family:'IBM Plex Mono',monospace; font-size:9px;
+    letter-spacing:0.15em; color:var(--yellow);
+    text-transform:uppercase; margin-bottom:14px;
+    line-height: 1.5;
+  }
+  .fl-airports {
+    display:flex; align-items:center; justify-content:space-between;
+    gap:8px; margin-bottom:14px;
+  }
+  .fl-port { text-align:center; }
+  .fl-code {
+    font-family:'Bebas Neue',sans-serif; font-size:clamp(28px,8vw,36px);
+    letter-spacing:2px; color:var(--text); display:block; line-height:1;
+  }
+  .fl-city { font-size:11px; color:var(--muted); margin-top:2px; }
+  .fl-mid { text-align:center; flex:1; position:relative; }
+  .fl-mid::before {
+    content:''; position:absolute; top:50%; left:0; right:0;
+    height:1px; background:rgba(247,201,72,0.25); transform:translateY(-50%);
+  }
+  .fl-plane { font-size:18px; position:relative; background:var(--card); padding:0 6px; }
+  .fl-times {
+    display:flex; justify-content:space-between;
+    padding-top:12px; border-top:1px solid var(--border);
+  }
+  .fl-tc { font-family:'IBM Plex Mono',monospace; font-size:11px; color:var(--muted); }
+  .fl-tc .fl-time-val { display:block; color:var(--text); font-size:17px; margin-bottom:1px; font-family:'Bebas Neue',sans-serif; letter-spacing:1px; }
+  .fl-num { color:var(--blue-light); font-size:12px; }
+
+  /* Meals */
+  .meal-list { display:flex; flex-direction:column; gap:8px; }
+  .meal-card {
+    background:var(--card); border:1px solid var(--border);
+    border-left:3px solid rgba(247,201,72,0.35); border-radius:3px;
+    padding:14px 16px;
+    display:flex; gap:14px; align-items:flex-start;
+  }
+  .meal-day-col { flex-shrink:0; min-width:64px; }
+  .meal-day {
+    font-family:'IBM Plex Mono',monospace; font-size:10px;
+    color:var(--yellow); letter-spacing:0.08em; text-transform:uppercase;
+    line-height: 1.4;
+  }
+  .meal-info { font-size:13px; line-height:1.6; color:var(--text); flex:1; }
+  .meal-note { font-family:'IBM Plex Mono',monospace; font-size:10px; color:var(--muted); margin-top:4px; }
+
+  /* Info rows */
+  .info-card {
+    background:var(--card); border:1px solid var(--border);
+    border-left:3px solid rgba(247,201,72,0.3); border-radius:4px;
+    padding:16px; margin-bottom:10px;
+  }
+  .info-row {
+    display:flex; justify-content:space-between; align-items:flex-start;
+    padding:10px 0; border-bottom:1px solid rgba(255,255,255,0.04);
+    gap:12px; min-height:44px;
+  }
+  .info-row:last-child { border-bottom:none; padding-bottom:0; }
+  .info-k {
+    font-family:'IBM Plex Mono',monospace; font-size:10px;
+    color:var(--muted); min-width:85px; padding-top:2px;
+    letter-spacing:0.06em; text-transform:uppercase; flex-shrink:0;
+  }
+  .info-v { font-size:13px; color:var(--text); text-align:right; }
+
+  /* Notice */
+  .notice {
+    border-radius:3px; padding:14px 16px; margin-bottom:10px;
+    display:flex; align-items:flex-start; gap:12px;
+    font-size:14px; line-height:1.55;
+  }
+  .notice.yellow { background:rgba(247,201,72,0.07); border:1px solid rgba(247,201,72,0.25); border-left:3px solid var(--yellow); }
+  .notice.blue   { background:rgba(74,158,255,0.07); border:1px solid rgba(74,158,255,0.2);  border-left:3px solid var(--blue-light); }
+  .n-icon { font-size:20px; flex-shrink:0; }
+
+  /* Footer */
+  .nyc-footer {
+    text-align:center; padding:20px 0;
+    font-family:'IBM Plex Mono',monospace; font-size:10px;
+    color:var(--muted); letter-spacing:0.1em;
+    border-top:1px solid var(--border); margin-top:16px;
+  }
+
+  /* Swipe indicator hint (first load only) */
+  .swipe-hint {
+    text-align:center; font-family:'IBM Plex Mono',monospace;
+    font-size:10px; color:var(--muted); letter-spacing:0.1em;
+    padding: 8px 0 0;
+    animation: fadeHint 3s ease 2s forwards;
+    opacity:0;
+  }
+  @keyframes fadeHint {
+    0%{opacity:0} 10%{opacity:1} 70%{opacity:1} 100%{opacity:0}
+  }
+</style>
+</head>
+<body>
+
+<!-- HEADER SKYLINE -->
+<div class="skyline-wrap">
+  <div class="stars"></div>
+  <svg class="skyline-svg" viewBox="0 0 1200 140" xmlns="http://www.w3.org/2000/svg"
+       preserveAspectRatio="xMidYMax slice"
+       style="height:clamp(72px,22vw,130px)">
+    <g fill="#0e1014">
+      <rect x="0" y="105" width="30" height="35"/><rect x="28" y="92" width="20" height="48"/>
+      <rect x="46" y="98" width="24" height="42"/><rect x="100" y="96" width="26" height="44"/>
+      <rect x="124" y="85" width="18" height="55"/><rect x="200" y="94" width="32" height="46"/>
+      <rect x="230" y="82" width="20" height="58"/><rect x="350" y="88" width="28" height="52"/>
+      <rect x="500" y="84" width="38" height="56"/><rect x="700" y="90" width="26" height="50"/>
+      <rect x="850" y="78" width="32" height="62"/><rect x="1000" y="86" width="28" height="54"/>
+      <rect x="1100" y="80" width="42" height="60"/><rect x="1145" y="88" width="55" height="52"/>
+    </g>
+    <g fill="#161819">
+      <rect x="0" y="112" width="16" height="28"/><rect x="14" y="98" width="14" height="42"/>
+      <rect x="26" y="108" width="18" height="32"/>
+      <rect x="48" y="80" width="16" height="60"/><polygon points="56,80 64,80 60,66" fill="#161819"/>
+      <rect x="62" y="100" width="20" height="40"/><rect x="80" y="90" width="17" height="50"/>
+      <rect x="100" y="102" width="28" height="38"/><rect x="106" y="93" width="16" height="9"/><rect x="111" y="84" width="6" height="9"/>
+      <!-- ESB -->
+      <rect x="136" y="48" width="22" height="92"/><rect x="140" y="38" width="14" height="10"/>
+      <rect x="143" y="28" width="8" height="10"/><rect x="145" y="16" width="4" height="12"/>
+      <rect x="156" y="72" width="18" height="68"/><rect x="172" y="92" width="14" height="48"/>
+      <rect x="184" y="86" width="20" height="54"/>
+      <rect x="210" y="94" width="24" height="46"/><rect x="232" y="104" width="18" height="36"/>
+      <rect x="248" y="76" width="26" height="64"/><rect x="272" y="92" width="16" height="48"/>
+      <rect x="286" y="82" width="22" height="58"/><rect x="306" y="96" width="18" height="44"/>
+      <!-- Chrysler -->
+      <rect x="328" y="58" width="24" height="82"/><rect x="332" y="48" width="16" height="10"/>
+      <rect x="335" y="38" width="10" height="10"/><rect x="337" y="28" width="6" height="10"/>
+      <polygon points="340,28 344,28 342,18" fill="#161819"/>
+      <path d="M328,60 Q340,54 352,60" fill="none" stroke="#1e2126" stroke-width="2"/>
+      <path d="M330,68 Q340,62 350,68" fill="none" stroke="#1e2126" stroke-width="1.5"/>
+      <rect x="350" y="82" width="16" height="58"/><rect x="364" y="94" width="20" height="46"/>
+      <rect x="382" y="80" width="26" height="60"/><rect x="406" y="90" width="18" height="50"/>
+      <rect x="432" y="70" width="28" height="70"/><rect x="458" y="84" width="20" height="56"/>
+      <rect x="476" y="64" width="24" height="76"/><rect x="498" y="86" width="16" height="54"/>
+      <!-- 1 WTC -->
+      <polygon points="534,0 542,0 576,140 506,140" fill="#161819"/>
+      <rect x="542" y="78" width="18" height="62"/>
+      <rect x="594" y="82" width="28" height="58"/><rect x="620" y="92" width="20" height="48"/>
+      <rect x="638" y="74" width="26" height="66"/><rect x="662" y="86" width="18" height="54"/>
+      <rect x="678" y="94" width="24" height="46"/>
+      <rect x="710" y="80" width="30" height="60"/><rect x="738" y="90" width="18" height="50"/>
+      <rect x="754" y="64" width="22" height="76"/><rect x="774" y="82" width="26" height="58"/>
+      <rect x="812" y="92" width="20" height="48"/><rect x="830" y="68" width="26" height="72"/>
+      <rect x="854" y="82" width="18" height="58"/><rect x="870" y="90" width="28" height="50"/>
+      <rect x="896" y="78" width="22" height="62"/><rect x="916" y="87" width="16" height="53"/>
+      <rect x="930" y="72" width="24" height="68"/><rect x="952" y="82" width="20" height="58"/>
+      <rect x="970" y="90" width="28" height="50"/><rect x="996" y="78" width="18" height="62"/>
+      <rect x="1012" y="86" width="26" height="54"/><rect x="1036" y="74" width="22" height="66"/>
+      <rect x="1056" y="84" width="20" height="56"/><rect x="1074" y="65" width="28" height="75"/>
+      <rect x="1100" y="82" width="24" height="58"/><rect x="1122" y="88" width="28" height="52"/>
+      <rect x="1148" y="82" width="52" height="58"/>
+    </g>
+    <!-- Windows -->
+    <g fill="#f7c948" opacity="0.5">
+      <rect x="138" y="52" width="2" height="2"/><rect x="142" y="52" width="2" height="2"/>
+      <rect x="138" y="59" width="2" height="2"/><rect x="142" y="59" width="2" height="2"/>
+      <rect x="138" y="66" width="2" height="2"/><rect x="142" y="66" width="2" height="2"/>
+      <rect x="138" y="73" width="2" height="2"/><rect x="142" y="73" width="2" height="2"/>
+      <rect x="157" y="75" width="2" height="2"/><rect x="161" y="75" width="2" height="2"/>
+      <rect x="157" y="82" width="2" height="2"/><rect x="161" y="82" width="2" height="2"/>
+      <rect x="434" y="74" width="2" height="2"/><rect x="438" y="74" width="2" height="2"/><rect x="442" y="74" width="2" height="2"/>
+      <rect x="434" y="81" width="2" height="2"/><rect x="438" y="81" width="2" height="2"/>
+      <rect x="478" y="68" width="2" height="2"/><rect x="482" y="68" width="2" height="2"/>
+      <rect x="478" y="75" width="2" height="2"/><rect x="486" y="75" width="2" height="2"/>
+      <rect x="756" y="68" width="2" height="2"/><rect x="760" y="68" width="2" height="2"/>
+      <rect x="832" y="72" width="2" height="2"/><rect x="836" y="72" width="2" height="2"/>
+      <rect x="1076" y="69" width="2" height="2"/><rect x="1080" y="69" width="2" height="2"/>
+      <rect x="1076" y="76" width="2" height="2"/><rect x="1084" y="76" width="2" height="2"/>
+    </g>
+    <g fill="rgba(180,210,255,0.4)">
+      <rect x="250" y="80" width="2" height="2"/><rect x="596" y="86" width="2" height="2"/>
+      <rect x="332" y="62" width="2" height="2"/><rect x="714" y="84" width="2" height="2"/>
+    </g>
+    <!-- Moon -->
+    <circle cx="1070" cy="20" r="11" fill="#fff9e6" opacity="0.9"/>
+    <circle cx="1075" cy="16" r="9" fill="#161819" opacity="0.95"/>
+    <!-- Ground glow -->
+    <rect x="0" y="133" width="1200" height="7" fill="url(#gg)"/>
+    <defs><linearGradient id="gg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#f7c948" stop-opacity="0.08"/>
+      <stop offset="100%" stop-color="#f7c948" stop-opacity="0"/>
+    </linearGradient></defs>
+  </svg>
+
+  <div class="header-content">
+    <div>
+      <div class="header-title">North Star<br>NY/DC 2026</div>
+      <div class="header-sub">APR 6–11 · 54 TRAVELERS · GRAND CLASSROOM</div>
+    </div>
+    <div class="live-clock">
+      <span class="live-dot"></span>
+      <span id="clock-display">--:-- --</span>
+    </div>
+  </div>
+</div>
+<div class="subway-line"></div>
+
+<!-- CONTENT -->
+<div class="app">
+
+  <!-- NOW -->
+  <div id="tab-now" class="tab-panel active"></div>
+
+  <!-- SCHEDULE -->
+  <div id="tab-overview" class="tab-panel">
+    <div id="overview-content"></div>
+  </div>
+
+  <!-- ESSENTIALS -->
+  <div id="tab-essentials" class="tab-panel">
+
+    <div class="ess-section">
+      <div class="ess-heading">✈️ Flights</div>
+      <div class="flight-card">
+        <div class="fl-tag">Outbound · Alaska Airlines 211 · Mon Apr 6</div>
+        <div class="fl-airports">
+          <div class="fl-port"><span class="fl-code">SFO</span><span class="fl-city">San Francisco</span></div>
+          <div class="fl-mid"><span class="fl-plane">✈️</span></div>
+          <div class="fl-port"><span class="fl-code">JFK</span><span class="fl-city">New York</span></div>
+        </div>
+        <div class="fl-times">
+          <div class="fl-tc"><span class="fl-time-val">7:02 AM</span>Depart</div>
+          <div class="fl-tc" style="text-align:center"><span class="fl-num">AS 211</span>~5h 38m</div>
+          <div class="fl-tc" style="text-align:right"><span class="fl-time-val">3:40 PM</span>Arrive</div>
+        </div>
+      </div>
+      <div class="flight-card">
+        <div class="fl-tag">Return Leg 1 · Southwest 2440 · Sat Apr 11</div>
+        <div class="fl-airports">
+          <div class="fl-port"><span class="fl-code">IAD</span><span class="fl-city">Washington DC</span></div>
+          <div class="fl-mid"><span class="fl-plane">✈️</span></div>
+          <div class="fl-port"><span class="fl-code">DEN</span><span class="fl-city">Denver</span></div>
+        </div>
+        <div class="fl-times">
+          <div class="fl-tc"><span class="fl-time-val">5:05 PM</span>Depart</div>
+          <div class="fl-tc" style="text-align:center"><span class="fl-num">WN 2440</span>~2h 00m</div>
+          <div class="fl-tc" style="text-align:right"><span class="fl-time-val">7:05 PM</span>Arrive</div>
+        </div>
+      </div>
+      <div class="flight-card">
+        <div class="fl-tag">Return Leg 2 · Southwest 1667 · Sat Apr 11</div>
+        <div class="fl-airports">
+          <div class="fl-port"><span class="fl-code">DEN</span><span class="fl-city">Denver</span></div>
+          <div class="fl-mid"><span class="fl-plane">✈️</span></div>
+          <div class="fl-port"><span class="fl-code">SFO</span><span class="fl-city">San Francisco</span></div>
+        </div>
+        <div class="fl-times">
+          <div class="fl-tc"><span class="fl-time-val">8:10 PM</span>Depart</div>
+          <div class="fl-tc" style="text-align:center"><span class="fl-num">WN 1667</span>~1h 45m</div>
+          <div class="fl-tc" style="text-align:right"><span class="fl-time-val">9:55 PM</span>Arrive</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="ess-section">
+      <div class="ess-heading">🏨 Hotels</div>
+      <div class="info-card">
+        <div class="info-row"><div class="info-k">Apr 6–8</div><div class="info-v">Holiday Inn Express Chelsea<br><span style="color:var(--muted);font-size:11px">232 West 29th St, New York, NY</span></div></div>
+        <div class="info-row"><div class="info-k">Phone</div><div class="info-v">(212) 695-7200</div></div>
+        <div class="info-row"><div class="info-k">Apr 8–11</div><div class="info-v">Fairfield Inn & Suites Alexandria<br><span style="color:var(--muted);font-size:11px">6421 Richmond Hwy, Alexandria, VA</span></div></div>
+        <div class="info-row"><div class="info-k">Phone</div><div class="info-v">703-721-0600</div></div>
+      </div>
+    </div>
+
+    <div class="ess-section">
+      <div class="ess-heading">🍽️ Meals</div>
+      <div class="meal-list">
+        <div class="meal-card"><div class="meal-day-col"><div class="meal-day">Mon<br>Apr 6</div></div><div><div class="meal-info">Dinner — Grisly Pear · 7:00 PM</div></div></div>
+        <div class="meal-card"><div class="meal-day-col"><div class="meal-day">Tue<br>Apr 7</div></div><div><div class="meal-info">Breakfast — hotel<br>Lunch — Time Out Market<br>Dinner — Ellen's Stardust Diner</div><div class="meal-note">🎵 Broadway day!</div></div></div>
+        <div class="meal-card"><div class="meal-day-col"><div class="meal-day">Wed<br>Apr 8</div></div><div><div class="meal-info">Breakfast — hotel<br>Lunch — Reading Terminal Market<br>Dinner allotment — Georgetown</div><div class="meal-note">Philly → DC day</div></div></div>
+        <div class="meal-card"><div class="meal-day-col"><div class="meal-day">Thu<br>Apr 9</div></div><div><div class="meal-info">Breakfast — hotel<br>Lunch — Pentagon City Mall<br>Dinner — Lauriol Plaza</div><div class="meal-note">DC Day 1</div></div></div>
+        <div class="meal-card"><div class="meal-day-col"><div class="meal-day">Fri<br>Apr 10</div></div><div><div class="meal-info">Breakfast — hotel<br>Lunch — L'Enfant Plaza<br>Dinner — The Fish Market</div><div class="meal-note">DC Day 2</div></div></div>
+        <div class="meal-card"><div class="meal-day-col"><div class="meal-day">Sat<br>Apr 11</div></div><div><div class="meal-info">Breakfast — hotel<br>Lunch — Shake Shack (Udvar Hazy)<br>Dinner allotment — airport</div><div class="meal-note">Return day 🏠</div></div></div>
+      </div>
+    </div>
+
+    <div class="ess-section">
+      <div class="ess-heading">📞 Contacts</div>
+      <div class="info-card">
+        <div class="info-row"><div class="info-k">Emergency</div><div class="info-v">(434) 973-8431</div></div>
+        <div class="info-row"><div class="info-k">Tour Guide</div><div class="info-v">Tim Phillips (Lead/POC)</div></div>
+        <div class="info-row"><div class="info-k">Teachers</div><div class="info-v">Michelle Guiney,<br>Gina Manion</div></div>
+        <div class="info-row"><div class="info-k">Transport</div><div class="info-v">Atlantic Coast Charters · 55pax</div></div>
+        <div class="info-row"><div class="info-k">Operator</div><div class="info-v">Grand Classroom</div></div>
+      </div>
+      <div class="notice yellow"><span class="n-icon">💳</span><span>Receive your <strong>prepaid Jassby debit card</strong> on Tuesday Apr 7 at the Brooklyn Bridge — hold onto it for the whole trip!</span></div>
+      <div class="notice blue"><span class="n-icon">🎭</span><span>Broadway: <strong>&amp; Juliet</strong> — Tue Apr 7 at 7:00 PM</span></div>
+    </div>
+
+    <div class="nyc-footer">🗽 NEW YORK · PHILADELPHIA · WASHINGTON DC · 2026 🦅</div>
+  </div>
+</div>
+
+<!-- BOTTOM NAV -->
+<nav class="bottom-nav">
+  <button class="nav-btn active" onclick="switchTab('now',this)" id="btn-now">
+    <span class="nav-icon">⚡</span>
+    <span class="nav-label">Now</span>
+  </button>
+  <button class="nav-btn" onclick="switchTab('overview',this)" id="btn-overview">
+    <span class="nav-icon">📋</span>
+    <span class="nav-label">Schedule</span>
+  </button>
+  <button class="nav-btn" onclick="switchTab('essentials',this)" id="btn-essentials">
+    <span class="nav-icon">✈️</span>
+    <span class="nav-label">Essentials</span>
+  </button>
+</nav>
+
+<script>
+const TRIP_START=new Date('2026-04-06T00:00:00');
+const TRIP_END=new Date('2026-04-11T23:59:59');
+const DAYS=[
+  {date:'2026-04-06',label:'Monday, April 6',short:'MON APR 6',activities:[
+    {time:'05:00',end:'07:02',text:'Arrive at SFO (2 hrs before departure)'},
+    {time:'07:02',end:'15:40',text:'✈️ Alaska Airlines 211: SFO → JFK'},
+    {time:'15:40',end:'16:30',text:'Meet tour guide at baggage claim · Board Coach'},
+    {time:'17:30',end:'18:30',text:'🌆 Explore Times Square (time permitting)'},
+    {time:'18:45',end:'19:00',text:'Walk to dinner'},
+    {time:'19:00',end:'20:30',text:'🍽️ Dinner at Grisly Pear'},
+    {time:'20:30',end:'22:00',text:'🗼 Visit 30 Rock & Top of the Rock'},
+    {time:'22:00',end:'23:59',text:'🏨 Check into Holiday Inn Express Chelsea'},
+  ]},
+  {date:'2026-04-07',label:'Tuesday, April 7',short:'TUE APR 7',activities:[
+    {time:'07:00',end:'08:00',text:'🍳 Hotel breakfast'},
+    {time:'08:00',end:'09:30',text:'Board Coach · See Wall Street · Walk to 9/11 Memorial'},
+    {time:'09:30',end:'10:30',text:'🕊️ Visit the 9/11 Memorial'},
+    {time:'10:30',end:'12:00',text:'🌉 Walk Brooklyn Bridge · Receive Jassby debit card'},
+    {time:'12:00',end:'13:00',text:'🍜 Lunch at Time Out Market Food Hall'},
+    {time:'13:00',end:'14:00',text:'Check out of hotel · Load luggage onto bus'},
+    {time:'14:00',end:'17:00',text:'Group splits: Met Museum OR American Museum of Natural History'},
+    {time:'17:00',end:'17:30',text:'🌳 Free time in Central Park'},
+    {time:'17:30',end:'19:00',text:'🍽️ Dinner at Ellen\'s Stardust Diner'},
+    {time:'19:00',end:'21:30',text:'🎭 Broadway show: & Juliet'},
+    {time:'21:30',end:'23:59',text:'🏨 Return to hotel · Hotel security'},
+  ]},
+  {date:'2026-04-08',label:'Wednesday, April 8',short:'WED APR 8',activities:[
+    {time:'06:30',end:'07:30',text:'🍳 Hotel breakfast'},
+    {time:'07:30',end:'10:00',text:'🚌 Depart for Philadelphia'},
+    {time:'10:00',end:'10:30',text:'🔔 See the Liberty Bell'},
+    {time:'10:45',end:'11:45',text:'🥙 Lunch at Reading Terminal Market'},
+    {time:'12:00',end:'14:00',text:'🏛️ Visit City Hall Philadelphia'},
+    {time:'14:15',end:'14:45',text:'🥊 Run the Rocky Steps'},
+    {time:'14:45',end:'18:00',text:'🚌 Depart for DC'},
+    {time:'18:00',end:'20:00',text:'🎓 Georgetown Campus · Dinner allotment in Georgetown'},
+    {time:'21:00',end:'21:30',text:'Meet guide · Depart for hotel'},
+    {time:'21:30',end:'23:59',text:'🏨 Check into Fairfield Inn & Suites Alexandria'},
+  ]},
+  {date:'2026-04-09',label:'Thursday, April 9',short:'THU APR 9',activities:[
+    {time:'06:30',end:'07:30',text:'🍳 Hotel breakfast'},
+    {time:'07:30',end:'08:30',text:'🚌 Depart for DC'},
+    {time:'08:30',end:'11:30',text:'🎖️ Arlington National Cemetery: Iwo Jima, Tomb of the Unknown Soldier, Changing of the Guard, Kennedy Gravesites'},
+    {time:'11:30',end:'12:30',text:'🍔 Lunch at Pentagon City Mall'},
+    {time:'12:30',end:'14:30',text:'🚌 Depart for Capitol Hill'},
+    {time:'14:30',end:'16:00',text:'🏛️ United States Capitol Tour'},
+    {time:'16:00',end:'17:30',text:'📜 Visit the National Archives'},
+    {time:'17:30',end:'19:00',text:'🍽️ Dinner at Lauriol Plaza'},
+    {time:'19:00',end:'21:00',text:'🌙 Evening memorial tour: Lincoln, Vietnam Veterans, Korean War'},
+    {time:'21:00',end:'23:59',text:'🏨 Return to hotel · Hotel security'},
+  ]},
+  {date:'2026-04-10',label:'Friday, April 10',short:'FRI APR 10',activities:[
+    {time:'08:00',end:'09:00',text:'🍳 Hotel breakfast'},
+    {time:'09:00',end:'10:00',text:'🚌 Depart for DC · Washington Monument picture stop'},
+    {time:'10:00',end:'12:30',text:'🏛️ Holocaust Museum OR African American Museum of History & Culture'},
+    {time:'12:30',end:'13:30',text:'🍱 Lunch at L\'Enfant Plaza'},
+    {time:'13:30',end:'15:30',text:'🏛️ Smithsonian Museum of Choice'},
+    {time:'15:30',end:'16:00',text:'Meet guide · Depart for Tidal Basin'},
+    {time:'16:00',end:'18:45',text:'🌸 Tidal Basin memorials: MLK Jr., FDR, Jefferson'},
+    {time:'18:45',end:'20:00',text:'🐟 Dinner at the Fish Market'},
+    {time:'20:00',end:'22:00',text:'👻 Ghost Tour of Alexandria'},
+    {time:'22:00',end:'23:59',text:'🏨 Return to hotel · Hotel security'},
+  ]},
+  {date:'2026-04-11',label:'Saturday, April 11',short:'SAT APR 11',activities:[
+    {time:'07:30',end:'08:30',text:'🍳 Hotel breakfast'},
+    {time:'08:30',end:'09:30',text:'Check out of hotel · Load luggage'},
+    {time:'09:30',end:'10:30',text:'🏛️ White House picture stop · Abe\'s Souvenir Store'},
+    {time:'10:30',end:'11:45',text:'🎭 Ford\'s Theatre and Peterson House'},
+    {time:'11:45',end:'14:45',text:'🚀 Udvar Hazy · Lunch at Shake Shack · Udvar Hazy Museum'},
+    {time:'14:45',end:'17:05',text:'🚌 Depart for Dulles · Dinner allotment at airport'},
+    {time:'17:05',end:'19:05',text:'✈️ Southwest 2440: IAD → DEN (5:05 PM)'},
+    {time:'20:10',end:'21:55',text:'✈️ Southwest 1667: DEN → SFO (8:10 PM)'},
+    {time:'21:55',end:'23:59',text:'🏠 Home! Welcome back, Gryphons! 🎉'},
+  ]},
+];
+
+function parseDateTime(d,t){
+  const[h,m]=t.split(':').map(Number);
+  const dt=new Date(d+'T00:00:00');dt.setHours(h,m,0,0);return dt;
+}
+function pad2(n){return String(n).padStart(2,'0');}
+function to12(t){
+  const[h,m]=t.split(':').map(Number);
+  return`${h%12||12}:${pad2(m)} ${h>=12?'PM':'AM'}`;
+}
+
+function getTripState(now){
+  if(now<TRIP_START)return{phase:'pre'};
+  if(now>TRIP_END)return{phase:'post'};
+  for(let di=0;di<DAYS.length;di++){
+    const day=DAYS[di];
+    const ds=new Date(day.date+'T00:00:00'),de=new Date(day.date+'T23:59:59');
+    if(now>=ds&&now<=de){
+      let cA=null,cI=-1;
+      for(let ai=0;ai<day.activities.length;ai++){
+        const a=day.activities[ai];
+        if(now>=parseDateTime(day.date,a.time)&&now<parseDateTime(day.date,a.end)){cA=a;cI=ai;break;}
+      }
+      return{phase:'active',dayIdx:di,day,currentAct:cA,currentIdx:cI};
+    }
+  }
+  return{phase:'active',dayIdx:0,day:DAYS[0],currentAct:null,currentIdx:-1};
+}
+
+function updateClock(){
+  const n=new Date(),h=n.getHours(),m=n.getMinutes(),s=n.getSeconds();
+  document.getElementById('clock-display').textContent=`${h%12||12}:${pad2(m)}:${pad2(s)} ${h>=12?'PM':'AM'}`;
+}
+
+function renderNow(){
+  const now=new Date(),state=getTripState(now),el=document.getElementById('tab-now');
+  if(state.phase==='pre'){
+    const diff=TRIP_START-now;
+    const d=Math.floor(diff/86400000),h=Math.floor((diff%86400000)/3600000);
+    const m=Math.floor((diff%3600000)/60000),s=Math.floor((diff%60000)/1000);
+    el.innerHTML=`<div class="state-wrap">
+      <div class="state-title">THE CITY AWAITS</div>
+      <p class="state-sub">Get ready, Gryphons. Departing <strong>Monday, April 6</strong>.<br>Be at SFO by 5:00 AM sharp.</p>
+      <div class="big-cd">
+        <div class="cd-cell"><span class="cd-val">${d}</span><span class="cd-unit">Days</span></div>
+        <div class="cd-cell"><span class="cd-val">${pad2(h)}</span><span class="cd-unit">Hours</span></div>
+        <div class="cd-cell"><span class="cd-val">${pad2(m)}</span><span class="cd-unit">Min</span></div>
+        <div class="cd-cell"><span class="cd-val">${pad2(s)}</span><span class="cd-unit">Sec</span></div>
+      </div>
+      <p style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--yellow);letter-spacing:0.08em">✈️ AS 211 · SFO → JFK · 7:02 AM</p>
+    </div>`;return;
+  }
+  if(state.phase==='post'){
+    el.innerHTML=`<div class="state-wrap"><div class="state-title">TRIP COMPLETE!</div><p class="state-sub">New York · Philadelphia · Washington DC.<br>Welcome home, North Star Gryphons! 🎉🗽</p></div>`;return;
+  }
+
+  const{dayIdx,day,currentAct,currentIdx}=state;
+  const tripPct=Math.min(100,Math.max(0,((now-TRIP_START)/(TRIP_END-TRIP_START))*100));
+  let html='';
+
+  if(currentAct){
+    const aS=parseDateTime(day.date,currentAct.time),aE=parseDateTime(day.date,currentAct.end);
+    const actPct=Math.min(100,Math.max(0,((now-aS)/(aE-aS))*100));
+    const rem=aE-now;
+    const rH=Math.floor(rem/3600000),rM=Math.floor((rem%3600000)/60000),rS=Math.floor((rem%60000)/1000);
+    html+=`<div class="card">
+      <div class="eyebrow">Now · Day ${dayIdx+1} of 6</div>
+      <div class="now-activity">${currentAct.text}</div>
+      <div class="now-timerange">${to12(currentAct.time)} – ${to12(currentAct.end)} · ${day.short}</div>
+      <div class="prog-wrap">
+        <div class="prog-labels"><span class="hi">Activity Progress</span><span>${Math.round(actPct)}%</span></div>
+        <div class="prog-bg"><div class="prog-fill" style="width:${actPct}%"></div></div>
+      </div>
+      <div class="cd-grid">
+        <div class="cd-cell"><span class="cd-val">${pad2(rH)}</span><span class="cd-unit">Hrs</span></div>
+        <div class="cd-cell"><span class="cd-val">${pad2(rM)}</span><span class="cd-unit">Min</span></div>
+        <div class="cd-cell"><span class="cd-val">${pad2(rS)}</span><span class="cd-unit">Sec</span></div>
+        <div class="cd-cell"><span class="cd-val">D${dayIdx+1}</span><span class="cd-unit">of 6</span></div>
+      </div>
+    </div>`;
+  }else{
+    html+=`<div class="card">
+      <div class="eyebrow">Day ${dayIdx+1} of 6</div>
+      <div class="now-activity">Between Activities</div>
+      <div class="now-timerange">${day.label}</div>
+    </div>`;
+  }
+
+  html+=`<div class="panel">
+    <div class="eyebrow">Trip Progress</div>
+    <div class="prog-wrap">
+      <div class="prog-labels"><span class="hi">Day ${dayIdx+1} of 6</span><span>${Math.round(tripPct)}% complete</span></div>
+      <div class="prog-bg"><div class="prog-fill trip" style="width:${tripPct}%"></div></div>
+    </div>
+  </div>`;
+
+  const nextActs=[];
+  for(let ai=(currentIdx>=0?currentIdx+1:0);ai<day.activities.length&&nextActs.length<3;ai++){
+    const a=day.activities[ai];
+    if(parseDateTime(day.date,a.time)>now)nextActs.push(a);
+  }
+  if(nextActs.length){
+    html+=`<div class="panel"><div class="eyebrow dim">Up Next Today</div><div class="next-items">`;
+    nextActs.forEach(a=>{
+      html+=`<div class="next-item"><div class="next-time">${to12(a.time)}</div><div class="next-text">${a.text}</div></div>`;
+    });
+    html+=`</div></div>`;
+  }
+
+  let doneCount=0,remCount=0;
+  day.activities.forEach((a,ai)=>{
+    if(ai===currentIdx)return;
+    if(now>parseDateTime(day.date,a.end))doneCount++;
+    else if(parseDateTime(day.date,a.time)>now)remCount++;
+  });
+  html+=`<div class="panel"><div class="eyebrow dim">Today at a Glance</div>
+    <div class="stat-row">
+      <div class="stat-cell"><div class="stat-val s-done">${doneCount}</div><div class="stat-lbl">Done</div></div>
+      <div class="stat-cell"><div class="stat-val s-now">${currentIdx>=0?1:0}</div><div class="stat-lbl">Now</div></div>
+      <div class="stat-cell"><div class="stat-val s-rem">${remCount}</div><div class="stat-lbl">Left</div></div>
+      <div class="stat-cell"><div class="stat-val s-tot">${day.activities.length}</div><div class="stat-lbl">Total</div></div>
+    </div>
+  </div>`;
+
+  el.innerHTML=html;
+}
+
+function renderOverview(){
+  const now=new Date(),state=getTripState(now);let html='';
+  DAYS.forEach((day,di)=>{
+    const dS=new Date(day.date+'T00:00:00'),dE=new Date(day.date+'T23:59:59');
+    const isPast=now>dE,isToday=now>=dS&&now<=dE,isFuture=now<dS;
+    const bc=isPast?'past':isToday?'today':'future';
+    const bl=isPast?'✓ '+day.short:isToday?'⚡ '+day.short:day.short;
+    html+=`<div class="day-block">
+      <div class="day-header">
+        <span class="day-badge ${bc}">${bl}</span>
+        <span class="day-full">${day.label}</span>
+        <span class="day-div"></span>
+      </div>
+      <div class="activity-list">`;
+    day.activities.forEach((act,ai)=>{
+      let rc='upcoming',isCur=false;
+      if(state.phase==='active'&&state.dayIdx===di&&state.currentIdx===ai){rc='current';isCur=true;}
+      else if(now>parseDateTime(day.date,act.end))rc='done';
+      if(isPast)rc='done';if(isFuture)rc='upcoming';
+      html+=`<div class="act-row ${rc}">
+        <div class="act-t${isCur?' now':''}">${to12(act.time)}</div>
+        <div class="act-pip"></div>
+        <div class="act-label">${act.text}</div>
+        ${isCur?'<div class="now-chip">NOW</div>':''}
+      </div>`;
+    });
+    html+=`</div></div>`;
+  });
+  document.getElementById('overview-content').innerHTML=html;
+}
+
+// Tab switching
+let currentTab='now';
+const TAB_ORDER=['now','overview','essentials'];
+
+function switchTab(tab,btn){
+  document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('tab-'+tab).classList.add('active');
+  (btn||document.getElementById('btn-'+tab)).classList.add('active');
+  currentTab=tab;
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+// Swipe gesture support
+let touchStartX=0,touchStartY=0;
+document.addEventListener('touchstart',e=>{
+  touchStartX=e.changedTouches[0].clientX;
+  touchStartY=e.changedTouches[0].clientY;
+},{passive:true});
+document.addEventListener('touchend',e=>{
+  const dx=e.changedTouches[0].clientX-touchStartX;
+  const dy=e.changedTouches[0].clientY-touchStartY;
+  if(Math.abs(dx)>Math.abs(dy)*1.5&&Math.abs(dx)>50){
+    const idx=TAB_ORDER.indexOf(currentTab);
+    if(dx<0&&idx<TAB_ORDER.length-1)switchTab(TAB_ORDER[idx+1]);
+    if(dx>0&&idx>0)switchTab(TAB_ORDER[idx-1]);
+  }
+},{passive:true});
+
+renderNow();renderOverview();updateClock();
+setInterval(()=>{updateClock();renderNow();},1000);
+setInterval(renderOverview,30000);
+</script>
+</body>
+</html>

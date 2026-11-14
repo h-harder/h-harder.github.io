@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="en" data-screen="pages">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#f6f2e8">
+  <meta name="referrer" content="no-referrer">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self'; font-src 'self'; connect-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'">
+  <meta name="description" content="Convert an ACSM ticket and deliver the book to your Readest library.">
+  <title>Bookpost · Send to Readest</title>
+  <link rel="icon" href="./helper/icon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="./helper/style.css">
+  <script type="module" src="./pages.js"></script>
+</head>
+<body>
+  <a class="skip" href="#main">Skip to importer</a>
+  <header class="mast">
+    <a class="wordmark" href="./" aria-label="Bookpost home"><img src="./helper/icon.svg" width="33" height="33" alt="">Bookpost</a>
+    <a class="library-link" href="https://web.readest.com/library" target="_blank" rel="noopener noreferrer">My Readest library <span aria-hidden="true">↗</span></a>
+  </header>
+  <main id="main">
+    <section class="intro" aria-labelledby="title">
+      <div><h1 id="title">Send a book to <em>Readest.</em></h1><p>Turn an ACSM file into a book in your library. Skip the Downloads folder.</p></div>
+      <div class="postmark" aria-hidden="true">
+        <div class="waves"><i></i><i></i><i></i></div>
+        <div class="stamp"><div><img src="./helper/carrier.webp" alt="" width="129" height="110"></div></div>
+      </div>
+    </section>
+    <div class="layout">
+      <section class="card" aria-labelledby="transfer-title">
+        <div class="airline" aria-hidden="true"></div>
+        <div class="card-inner">
+          <h2 id="transfer-title">New transfer</h2>
+          <div class="drop" id="drop">
+            <span class="file-symbol" aria-hidden="true"><span>↥</span></span>
+            <strong id="file-name">Choose an ACSM file</strong>
+            <span id="file-detail">or drop it here</span>
+            <input id="ticket" type="file" name="ticket" accept=".acsm,.ascm" aria-label="Choose an ACSM file" aria-describedby="file-detail">
+          </div>
+          <div id="actions"><button class="primary" id="send" type="button">Set up Bookpost <span aria-hidden="true">→</span></button></div>
+          <p class="note" id="status" role="status">First time? Add the Chrome helper to connect to Readest.</p>
+          <p class="error" id="error" role="alert" hidden></p>
+        </div>
+      </section>
+      <aside class="delivery" aria-label="Transfer details">
+        <span class="small-label">Deliver to</span>
+        <div class="dest"><span class="shelf-icon" aria-hidden="true"><i></i><i></i><i></i></span><div><h2>Readest</h2><p>Your personal library</p></div></div>
+        <hr>
+        <p>Your ticket goes to ACSM Converter. The finished book goes to your signed-in Readest account.</p>
+        <button class="text-action" id="about" type="button">How it works <span aria-hidden="true">↗</span></button>
+      </aside>
+    </div>
+    <noscript><p class="error">Turn on JavaScript to select a ticket and open the importer.</p></noscript>
+  </main>
+  <footer><span>Bookpost</span><a href="https://github.com/h-harder/h-harder.github.io/tree/main/bookpost" target="_blank" rel="noopener noreferrer">Source on GitHub <span aria-hidden="true">↗</span></a></footer>
+  <dialog id="setup" aria-labelledby="setup-title">
+    <form method="dialog"><button class="close" type="submit" aria-label="Close setup">×</button></form>
+    <span class="small-label">Desktop Chrome &amp; Edge</span>
+    <h2 id="setup-title">Connect Bookpost</h2>
+    <p>The helper lets the converter send the finished book to Readest’s official Send page. You sign in there. Bookpost never asks for a Readest password.</p>
+    <ol>
+      <li><a href="./bookpost-helper.zip" download>Download the helper ZIP</a> and unzip it into a folder you’ll keep.</li>
+      <li>Open <code>chrome://extensions</code> (or <code>edge://extensions</code>). Turn on <strong>Developer mode</strong>.</li>
+      <li>Choose <strong>Load unpacked</strong> and select the folder containing <code>manifest.json</code>.</li>
+      <li>Return to this page and reload it. Choose your ACSM file and press <strong>Continue to Readest</strong>.</li>
+    </ol>
+    <a class="primary" href="./bookpost-helper.zip" download>Download helper <span aria-hidden="true">↓</span></a>
+    <details><summary>Using the Readest app on Mac, iPhone, or iPad?</summary><p>Open <strong>+ → From Web Browser</strong> in Readest and visit <strong>www.acsm-converter.com</strong>. Choose and convert your ticket there. Readest imports supported downloads from its own browser. If you’re already viewing Bookpost inside Readest, <a href="https://www.acsm-converter.com/" rel="noreferrer">open the converter here</a>.</p></details>
+  </dialog>
+</body>
+</html>

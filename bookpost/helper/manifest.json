@@ -1,0 +1,30 @@
+{
+  "manifest_version": 3,
+  "name": "Bookpost for Readest",
+  "version": "1.0.0",
+  "description": "Send a book from Bookpost to your signed-in Readest library.",
+  "minimum_chrome_version": "116",
+  "background": { "service_worker": "router.js" },
+  "host_permissions": [
+    "https://www.acsm-converter.com/*"
+  ],
+  "content_security_policy": {
+    "extension_pages": "script-src 'self'; object-src 'none'; connect-src https://www.acsm-converter.com"
+  },
+  "content_scripts": [
+    {
+      "matches": ["https://h-harder.github.io/bookpost/*"],
+      "js": ["launch.js"]
+    },
+    {
+      "matches": ["https://web.readest.com/*"],
+      "include_globs": [
+        "https://web.readest.com/send*",
+        "https://web.readest.com/auth*",
+        "https://web.readest.com/library*"
+      ],
+      "js": ["protocol.js", "receive.js"],
+      "run_at": "document_idle"
+    }
+  ]
+}

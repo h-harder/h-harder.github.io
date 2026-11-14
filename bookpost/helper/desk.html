@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#f6f2e8"><meta name="referrer" content="no-referrer">
+  <title>Bookpost · Transfer desk</title>
+  <link rel="icon" href="./icon.svg"><link rel="stylesheet" href="./style.css">
+  <script src="./protocol.js" defer></script><script type="module" src="./desk.js"></script>
+</head>
+<body>
+  <a class="skip" href="#main">Skip to importer</a>
+  <header class="mast">
+    <a class="wordmark" href="https://h-harder.github.io/bookpost/" aria-label="Bookpost home"><img src="./icon.svg" alt="" width="32" height="32">Bookpost</a>
+    <a class="library-link" href="https://web.readest.com/library" target="_blank" rel="noopener noreferrer">My Readest library <span aria-hidden="true">↗</span></a>
+  </header>
+  <main id="main">
+    <section class="intro" aria-labelledby="title"><div><h1 id="title">Send a book to <em>Readest.</em></h1><p>Choose a ticket. We’ll deliver the book to your signed-in library.</p></div>
+      <div class="postmark" aria-hidden="true"><div class="waves"><i></i><i></i><i></i></div><div class="stamp"><div><img src="./carrier.webp" alt="" width="129" height="110"></div></div></div>
+    </section>
+    <div class="layout"><section class="card" aria-labelledby="transfer-title"><div class="airline" aria-hidden="true"></div><div class="card-inner">
+      <h2 id="transfer-title">New transfer</h2>
+      <div class="drop" id="drop">
+        <span class="file-symbol" aria-hidden="true"><span>↥</span></span><strong id="file-name">Choose an ACSM file</strong><span id="file-detail">or drop it here</span>
+        <input id="ticket" type="file" name="ticket" accept=".acsm,.ascm" aria-label="Choose an ACSM file" aria-describedby="file-detail">
+      </div>
+      <div class="manual" id="manual" hidden>
+        <p><a id="provider" target="_blank" rel="noopener noreferrer">Open the provider download instructions ↗</a></p>
+        <label for="provider-file">Choose the book supplied by the provider</label>
+        <input id="provider-file" type="file" name="provider-book" accept=".epub,.pdf,application/epub+zip,application/pdf">
+      </div>
+      <button id="send" class="primary" type="button">Convert &amp; send <span aria-hidden="true">→</span></button>
+      <progress id="progress" class="progress" aria-label="Transfer progress" hidden></progress>
+      <p id="status" class="note" role="status">Readest will open in another tab for the handoff.</p>
+      <p id="error" class="error" role="alert" hidden></p>
+      <div class="alt-row"><button id="view" type="button" hidden>View Readest tab ↗</button><button id="reset" type="button" hidden>Start another transfer</button></div>
+      <div id="receipt" class="receipt" hidden><strong>Added to your library</strong><p id="receipt-title"></p><a href="https://web.readest.com/library" target="_blank" rel="noopener noreferrer">Open Readest library ↗</a></div>
+    </div></section>
+    <aside class="delivery"><span class="small-label">Deliver to</span>
+      <div class="dest"><span class="shelf-icon" aria-hidden="true"><i></i><i></i><i></i></span><div><h2>Readest</h2><p>Your personal library</p></div></div>
+      <hr><p>Your ticket goes to ACSM Converter. Readest receives the book through its official Send page.</p>
+      <details><summary>Where is my book?</summary><p>Keep this tab open during delivery. Readest will show the book in your library after it accepts the import. If delivery stops, you can retry with the converted book held in this tab.</p></details>
+    </aside></div>
+  </main>
+  <footer><span>Bookpost</span><a href="https://github.com/h-harder/h-harder.github.io/tree/main/bookpost" target="_blank" rel="noopener noreferrer">Source on GitHub ↗</a></footer>
+</body></html>
